@@ -170,5 +170,12 @@ cython_debug/
 # Ruff stuff:
 .ruff_cache/
 
+# Exclude sensitive data
+data/*.csv
+
+# Exclude environment files
+env/
+venv/
+
 # PyPI configuration file
 .pypirc
