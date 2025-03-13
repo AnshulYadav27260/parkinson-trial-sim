@@ -45,19 +45,22 @@ class ParkinsonTrialDES:
         df['Age'] = pd.to_numeric(df['Age'], errors='coerce')
         
         for idx, row in df.iterrows():
-            p = {
-                'id': row['Patient_ID'],
-                'treatment': row['Treatment_Group'],
-                'responder_status': self._assign_responder_status(row),
-                'baseline_updrs': row['Baseline_UPDRS'],
-                'progression_rate': self._calculate_progression(row),
-                'adherence': self._calculate_adherence(row),
-                'bmi': row.get('BMI', 25),  # Handle missing BMI
-                'moca': row.get('MoCA_Score', 26)  # Include MoCA score
-            }
-            self.patients.append(p)
-            self.env.process(self.patient_journey(p))
-    
+            # Calculate responder_status FIRST
+    responder_status = self._assign_responder_status(row)
+    p = {
+        'id': row['Patient_ID'],
+        'treatment': row['Treatment_Group'],
+        'responder_status': responder_status,  # Use pre-calculated value
+        'baseline_updrs': row['Baseline_UPDRS'],
+        'progression_rate': self._calculate_progression(row),
+        # Pass both row AND responder_status to adherence calculation
+        'adherence': self._calculate_adherence(row, responder_status),
+        'bmi': row.get('BMI', 25),
+        'moca': row.get('MoCA_Score', 26)
+    }
+    self.patients.append(p)
+    self.env.process(self.patient_journey(p))
+            
     def _assign_responder_status(self, patient):
         # Enhanced responder criteria with BMI consideration
         if patient['Baseline_UPDRS'] < 30 and patient.get('BMI', 25) < 30:
@@ -71,18 +74,19 @@ class ParkinsonTrialDES:
             else np.random.normal(self.beta_fast, 0.024)
         return base_rate * (1 - 0.4*(patient['Treatment_Group'] == 'Exenatide')) * cognitive_modifier
     
-    def _calculate_adherence(self, patient):
-        """Enhanced adherence model with dataset values and adverse effects"""
-        base_adherence = patient.get('Adherence',  # Use dataset value if available
-            0.86 if patient['Treatment_Group'] == 'Exenatide' else 0.75)
+    def _calculate_adherence(self, patient_row, responder_status):
+    """Enhanced adherence model with dataset values and adverse effects"""
+    base_adherence = patient_row.get('Adherence', 
+        0.86 if patient_row['Treatment_Group'] == 'Exenatide' else 0.75)
         
-        # Adjust for adverse effects
-        if patient.get('Nausea', 0) > 3:  # Scale 0-10
-            base_adherence *= 0.8
-        if patient.get('Pancreatitis', 0):
-            base_adherence *= 0.5
+       # Adjust for adverse effects
+    if patient_row.get('Nausea', 0) > 3:
+        base_adherence *= 0.8
+    if patient_row.get('Pancreatitis', 0):
+        base_adherence *= 0.5
             
-        return min(max(base_adherence * (1 + 0.1*(patient['responder_status'] == 'High')), 0), 1)
+       # Use passed responder_status instead of looking it up
+    return min(max(base_adherence * (1 + 0.1*(responder_status == 'High')), 0), 1)
     
     def patient_journey(self, patient):
         costs = {'medication': 0, 'hospitalization': 0, 'monitoring': 0}
