@@ -4,7 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 
-csv_path = 'parkinson-trial-sim/data/Integrated_Patient_and_Progression_Data.csv'
+csv_path = '../data/Integrated_Patient_and_Progression_Data.csv'
 if not os.path.exists(csv_path):
     raise FileNotFoundError(f"Data file not found at {os.path.abspath(csv_path)}")
 
@@ -129,7 +129,7 @@ params = {
     'beta_slow': -1.071,
     'beta_fast': -0.924,
     'sigma_patient': 35.557,
-    'patient_data': pd.read_csv('parkinson-trial-sim/data/Integrated_Patient_and_Progression_Data.csv')
+    'patient_data': pd.read_csv('../data/Integrated_Patient_and_Progression_Data.csv')
 }
 
 # Simulation execution
