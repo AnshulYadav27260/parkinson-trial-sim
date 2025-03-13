@@ -1,11 +1,8 @@
+from pathlib import Path  
+import pandas as pd
 import numpy as np
 import simpy
-import pandas as pd
 import matplotlib.pyplot as plt
-import os
-from pathlib import Path
-import pandas as pd
-import Path
 
 # Get the absolute path to the data directory
 current_dir = Path(__file__).parent
