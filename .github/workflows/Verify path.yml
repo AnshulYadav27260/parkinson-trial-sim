@@ -1,4 +1,4 @@
- name: Debug paths
-  run:|
+- name: Debug paths
+  run: |
     echo "Workspace: ${{ github.workspace }}"
     echo "Current dir: $(pwd)"
