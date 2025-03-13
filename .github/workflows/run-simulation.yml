@@ -6,16 +6,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
+      
+      - name: Verify file structure
+        run: |
+          ls -la
+          ls -la data/
+          
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
-
+          python-version: '3.10'
+          
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-
+          
       - name: Run simulation
         run: |
           python src/parkinson_des.py
