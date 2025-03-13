@@ -1,19 +1,22 @@
-from pathlib import Path  
+from pathlib import Path
 import pandas as pd
 import numpy as np
 import simpy
 import matplotlib.pyplot as plt
 
-# Get the absolute path to the data directory
+# --- Path Configuration ---
 current_dir = Path(__file__).parent
 data_file = current_dir.parent / 'data' / 'Integrated_Patient_and_Progression_Data.csv'
 
-# Verify file exists
 if not data_file.exists():
     raise FileNotFoundError(f"Data file missing at {data_file}")
 
+# --- Single Params Definition ---
 params = {
-    'patient_data': pd.read_csv(data_path)
+    'beta_slow': -1.071,
+    'beta_fast': -0.924,
+    'sigma_patient': 35.557,
+    'patient_data': pd.read_csv(data_file)
 }
 
 class ParkinsonTrialDES:
