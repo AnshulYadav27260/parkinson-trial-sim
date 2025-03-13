@@ -4,19 +4,20 @@ import numpy as np
 import simpy
 import matplotlib.pyplot as plt
 
-# --- Path Configuration ---
+# Get the absolute path to the data directory
 current_dir = Path(__file__).parent
 data_file = current_dir.parent / 'data' / 'Integrated_Patient_and_Progression_Data.csv'
 
+# Verify file exists
 if not data_file.exists():
     raise FileNotFoundError(f"Data file missing at {data_file}")
 
-# --- Single Params Definition ---
+# CORRECTED PARAMS DEFINITION (using data_file instead of data_path)
 params = {
     'beta_slow': -1.071,
     'beta_fast': -0.924,
     'sigma_patient': 35.557,
-    'patient_data': pd.read_csv(data_file)
+    'patient_data': pd.read_csv(data_file)  # This was the key fix
 }
 
 class ParkinsonTrialDES:
@@ -131,13 +132,7 @@ class ParkinsonTrialDES:
             'moca': patient.get('MoCA_Score', 26)
         })
 
-# Data loading and preprocessing
-params = {
-    'beta_slow': -1.071,
-    'beta_fast': -0.924,
-    'sigma_patient': 35.557,
-    'patient_data': pd.read_csv(str(data_file))
-}
+
 
 # Simulation execution
 env = simpy.Environment()
