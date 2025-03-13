@@ -3,13 +3,17 @@ import simpy
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
+from pathlib import Path
 
-csv_path = '../data/Integrated_Patient_and_Progression_Data.csv'
-if not os.path.exists(csv_path):
-    raise FileNotFoundError(f"Data file not found at {os.path.abspath(csv_path)}")
+# Get the absolute path to the data directory
+current_dir = Path(__file__).parent
+data_path = current_dir.parent / 'data' / 'Integrated_Patient_and_Progression_Data.csv'
+
+if not data_path.exists():
+    raise FileNotFoundError(f"Data file not found at {data_path}")
 
 params = {
-    'patient_data': pd.read_csv(csv_path)
+    'patient_data': pd.read_csv(data_path)
 }
 
 class ParkinsonTrialDES:
@@ -129,7 +133,7 @@ params = {
     'beta_slow': -1.071,
     'beta_fast': -0.924,
     'sigma_patient': 35.557,
-    'patient_data': pd.read_csv('../data/Integrated_Patient_and_Progression_Data.csv')
+    'patient_data': pd.read_csv('current_dir.parent / 'data' / 'Integrated_Patient_and_Progression_Data.csv')
 }
 
 # Simulation execution
